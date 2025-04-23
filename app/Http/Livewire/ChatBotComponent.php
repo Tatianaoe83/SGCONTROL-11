@@ -3,7 +3,7 @@
 namespace App\Http\Livewire;
 
 use Livewire\Component;
-use App\Models\Empleado; // O el modelo que uses
+use App\Services\AIService;
 
 class ChatBotComponent extends Component
 {
@@ -12,29 +12,27 @@ class ChatBotComponent extends Component
 
     public function sendMessage()
     {
-        $this->messages[] = ['role' => 'user', 'text' => $this->userMessage];
-
-        // Simulación de lógica inteligente (ejemplo simple)
-        $response = $this->processMessage($this->userMessage);
-        
-        $this->messages[] = ['role' => 'bot', 'text' => $response];
-
-        $this->userMessage = '';
-    }
-
-    public function processMessage($msg)
-    {
-        // Ejemplo: buscar empleados por nombre
-        if (str_contains(strtolower($msg), 'buscar empleado')) {
-            $nombre = str_replace('buscar empleado ', '', strtolower($msg));
-            $resultados = Empleado::where('nombre', 'like', "%$nombre%")->pluck('nombre');
-
-            return $resultados->isNotEmpty()
-                ? 'Resultados: ' . $resultados->join(', ')
-                : 'No se encontró ningún empleado con ese nombre.';
+        if (trim($this->userMessage) === '') {
+            return;
         }
 
-        return 'No entendí tu mensaje. ¿Puedes reformularlo?';
+        $this->messages[] = [
+            'role' => 'user',
+            'text' => $this->userMessage,
+        ];
+
+        $userInput = $this->userMessage;
+        $this->userMessage = '';
+
+
+        $aiService = app(AIService::class);
+
+        $aiReply = $aiService->chat($userInput);
+
+        $this->messages[] = [
+            'role' => 'assistant',
+            'text' => $aiReply,
+        ];
     }
 
     public function render()
