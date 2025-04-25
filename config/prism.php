@@ -6,11 +6,11 @@ return [
         'middleware' => [],
         'enabled' => env('PRISM_SERVER_ENABLED', true),
     ],
-    'default' => 'openai', // <- este es muy importante
+    'default' => 'openai', 
     'providers' => [
         'openai' => [
-           'url' => env('OPENAI_URL', 'https://api.openai.com/v1/chat/completions'),
-            'api_key' => env('OPENAI_API_KEY'),
+           'url' => env('OPENAI_URL', ''),
+           'api_key' => env('OPENAI_API_KEY', ''),
             'organization' => env('OPENAI_ORGANIZATION', null),
             'project' => env('OPENAI_PROJECT', null),
         ],
