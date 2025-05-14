@@ -6,15 +6,16 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "amidesfahani/filament-tinyeditor": "^2.1",
+        "bezhansalleh/filament-language-switch": "^3.1",
+        "bezhansalleh/filament-shield": "^3.3",
+        "diogogpinto/filament-auth-ui-enhancer": "^1.0",
+        "filament/actions": "3.3",
         "filament/filament": "3.3",
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.6",
-        "prism-php/prism": "^0.61.0",
-        "amidesfahani/filament-tinyeditor": "^2.1",
-        "bezhansalleh/filament-language-switch": "^3.1",
-        "bezhansalleh/filament-shield": "^3.3",
-        "diogogpinto/filament-auth-ui-enhancer": "^1.0"
+        "prism-php/prism": "^0.61.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

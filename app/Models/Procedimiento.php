@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $NombreProcedimiento
  * @property string|null $DocumentoEditable
  * @property string|null $Version
- * @property string|null $Estatus
+ * @property int $Idestatus
  * @property string $Division
  * @property string $FolioCambios
  * @property string $DescripcionCambios
@@ -37,14 +37,29 @@ class Procedimiento extends Model
 	];
 
 	protected $fillable = [
+		
+		'NombreProcedimiento',
 		'IdProcesosP',
 		'FolioProcedimientos',
-		'NombreProcedimiento',
-		'DocumentoEditable',
 		'Version',
-		'Estatus',
+		'Idestatus',
 		'Division',
-		'FolioCambios',
-		'DescripcionCambios'
+		'UnidadNegocio'
 	];
+
+	public function blocks()
+	{
+		return $this->hasMany(ProcedimientosBlock::class);
+	}
+
+	public function estatusP()
+    {
+        return $this->hasMany(\App\Models\Estatus::class, 'idestatus');
+    }
+
+	public function proceso()
+    {
+        return $this->hasMany(\App\Models\Proceso::class, 'IdProcesos');
+    }
+
 }

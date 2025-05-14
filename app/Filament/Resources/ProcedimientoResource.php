@@ -9,6 +9,9 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Note;
+use App\Models\Proceso;
+use App\Models\Estatus;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -28,60 +31,92 @@ class ProcedimientoResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('IdProcesosP')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('FolioProcedimientos')
+        $notes = Note::where('section', 1)->orderBy('order')->get();
+
+        return $form->schema([
+            Forms\Components\TextInput::make('NombreProcedimiento')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('NombreProcedimiento')
+            Forms\Components\Select::make('IdProcesosP')
+                    ->label('Proceso')
+                    ->options(Proceso::all()->pluck('DescripcionProcesos', 'IdProcesos'))
+                    ->required()
+                    ->searchable(),
+            Forms\Components\TextInput::make('FolioProcedimientos')
                     ->required()
                     ->maxLength(255),
-                TinyEditor::make('DocumentoEditable')
-                    ->profile('default')
-                    ->rtl()
-                    ->columnSpan('full')
-                    ->required(),
-                Forms\Components\TextInput::make('Version')
+            Forms\Components\TextInput::make('Version')
                     ->maxLength(255)
-                    ->default(1),
-                Forms\Components\TextInput::make('Estatus')
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\TextInput::make('Division')
+                    ->default(1),        
+            Forms\Components\Select::make('Idestatus')
+                    ->label('Estatus')
+                    ->options(Estatus::all()->pluck('nombre', 'idestatus'))
+                    ->required()
+                    ->default(1)
+                    ->searchable(),
+            Forms\Components\TextInput::make('Division')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('FolioCambios')
+            Forms\Components\TextInput::make('UnidadNegocio')
+                    ->label('Unidad de negocio')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('DescripcionCambios')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+            Forms\Components\Repeater::make('blocks')
+                ->addable(false)
+                ->deletable(false)
+                ->reorderable(false)
+                ->label('Contenido del procedimiento')
+                ->schema(function () use ($notes) {
+                    return collect($notes)->map(function ($note) {
+
+                        return Forms\Components\Group::make([
+                            Forms\Components\Hidden::make('titulo')->default($note->content),
+                            Forms\Components\Placeholder::make("header_{$note->id}")
+                                ->label('')
+                                ->content(fn () => $note->order.'.'.$note->content),
+                            TinyEditor::make("descripcion")
+                                ->label('')
+                                ->required(),
+                        ]);
+                    })->toArray();
+                }),
+        ]);
     }
+
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('IdProcesosP')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('FolioProcedimientos')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('NombreProcedimiento')
+                ->searchable(),
+                Tables\Columns\TextColumn::make('proceso.DescripcionProcesos')
+                ->label('Proceso')
+                ->numeric()
+                ->sortable(),
+                Tables\Columns\TextColumn::make('FolioProcedimientos')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('Version')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('Estatus')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('estatusP.nombre')
+                ->label('Estatus')
+                ->badge()
+                ->color(fn (string $state): string => match ($state) {
+                    
+                    'Proceso' => 'gray',
+                    'Liberado' => 'info',
+                    'Revision' => 'warning',
+                    'Firmas' => 'primary',
+                    'Portal' => 'success',
+                    'Detenido' => 'danger',
+                    'Cerrado' => 'danger',
+                })
+                ->numeric()
+                ->sortable(),
                 Tables\Columns\TextColumn::make('Division')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('FolioCambios')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('DescripcionCambios')
+                    ->label('Folio')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -122,4 +157,26 @@ class ProcedimientoResource extends Resource
             'edit' => Pages\EditProcedimiento::route('/{record}/edit'),
         ];
     }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+        {
+            logger()->error('mutateFormDataBeforeCreate Error: ' . $data['blocks']);
+                $blocks = $data['blocks'];
+                unset($data['blocks']);
+                $this->creatingProcedureBlocks = $blocks;
+                return $data;
+        }
+
+        protected function afterCreate(): void
+        {
+            logger()->error('afterCreate Error: ');
+
+            foreach ($this->creatingProcedureBlocks as $block) {
+                $this->record->blocks()->create([
+                    'titulo' => $block['titulo'],
+                    'descripcion' => $block['descripcion'],
+                ]);
+            }
+        }
+
 }

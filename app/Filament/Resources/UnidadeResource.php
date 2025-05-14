@@ -21,6 +21,8 @@ class UnidadeResource extends Resource
 
     protected static ?string $navigationGroup = 'Gestión de calidad';
 
+    protected static ?int $navigationSort = 9;
+
     public static function form(Form $form): Form
     {
         return $form

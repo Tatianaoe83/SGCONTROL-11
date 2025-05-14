@@ -45,4 +45,11 @@ class Proceso extends Model
 	{
 		return $this->belongsTo(Tipoproceso::class, 'IdTipoProcesosP');
 	}
+
+	
+	public function procedimiento()
+	{
+		return $this->belongsTo(Procedimiento::class, 'IdProcesos');
+	}
+
 }

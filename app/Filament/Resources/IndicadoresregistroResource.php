@@ -24,6 +24,8 @@ class IndicadoresregistroResource extends Resource
 
     protected static ?string $navigationLabel = 'Resultados de indicadores';
 
+    protected static ?int $navigationSort = 8;
+
 
     public static function form(Form $form): Form
     {
