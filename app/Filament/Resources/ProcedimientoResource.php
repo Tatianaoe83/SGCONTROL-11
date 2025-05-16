@@ -12,10 +12,13 @@ use Filament\Tables;
 use App\Models\Note;
 use App\Models\Proceso;
 use App\Models\Estatus;
+use App\Models\User;
+use App\Models\Firmas;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use AmidEsfahani\FilamentTinyEditor\TinyEditor;
+use Filament\Forms\Components\Tabs;
 
 
 class ProcedimientoResource extends Resource
@@ -27,59 +30,98 @@ class ProcedimientoResource extends Resource
     protected static ?string $navigationGroup = 'Gestión de calidad';
 
     protected static ?string $navigationLabel = 'Procedimientos';
+   
+    protected static ?int $navigationSort = 2;
 
 
     public static function form(Form $form): Form
     {
         $notes = Note::where('section', 1)->orderBy('order')->get();
-
+    
         return $form->schema([
-            Forms\Components\TextInput::make('NombreProcedimiento')
-                    ->required()
-                    ->maxLength(255),
-            Forms\Components\Select::make('IdProcesosP')
-                    ->label('Proceso')
-                    ->options(Proceso::all()->pluck('DescripcionProcesos', 'IdProcesos'))
-                    ->required()
-                    ->searchable(),
-            Forms\Components\TextInput::make('FolioProcedimientos')
-                    ->required()
-                    ->maxLength(255),
-            Forms\Components\TextInput::make('Version')
-                    ->maxLength(255)
-                    ->default(1),        
-            Forms\Components\Select::make('Idestatus')
-                    ->label('Estatus')
-                    ->options(Estatus::all()->pluck('nombre', 'idestatus'))
-                    ->required()
-                    ->default(1)
-                    ->searchable(),
-            Forms\Components\TextInput::make('Division')
-                    ->required()
-                    ->maxLength(255),
-            Forms\Components\TextInput::make('UnidadNegocio')
-                    ->label('Unidad de negocio')
-                    ->required()
-                    ->maxLength(255),
-            Forms\Components\Repeater::make('blocks')
-                ->addable(false)
-                ->deletable(false)
-                ->reorderable(false)
-                ->label('Contenido del procedimiento')
-                ->schema(function () use ($notes) {
-                    return collect($notes)->map(function ($note) {
+            Tabs::make('Procedimiento')
+                ->columnSpan('full')
+                ->tabs([
+                    Tabs\Tab::make('Información general')
+                        ->schema([
+                            Forms\Components\TextInput::make('NombreProcedimiento')
+                                ->required()
+                                ->maxLength(255),
+                            Forms\Components\Select::make('IdProcesosP')
+                                ->label('Proceso')
+                                ->options(Proceso::all()->pluck('DescripcionProcesos', 'IdProcesos'))
+                                ->required()
+                                ->searchable(),
+                            Forms\Components\TextInput::make('FolioProcedimientos')
+                                ->required()
+                                ->maxLength(255),
+                            Forms\Components\TextInput::make('Version')
+                                ->maxLength(255)
+                                ->default(1),
+                            Forms\Components\Select::make('Idestatus')
+                                ->label('Estatus')
+                                ->options(Estatus::all()->pluck('nombre', 'idestatus'))
+                                ->required()
+                                ->default(1)
+                                ->searchable(),
+                            Forms\Components\TextInput::make('Division')
+                                ->required()
+                                ->maxLength(255),
+                            Forms\Components\TextInput::make('UnidadNegocio')
+                                ->label('Unidad de negocio')
+                                ->required()
+                                ->maxLength(255),
+                            Forms\Components\DatePicker::make('fechaEmision')
+                                ->label('Fecha de emision'),
+                                
+                        ]),
+                    Tabs\Tab::make('Contenido del procedimiento')
+                        ->schema([
+                            Forms\Components\Repeater::make('blocks')
+                                ->addable(false)
+                                ->deletable(false)
+                                ->reorderable(false)
+                                ->label('Contenido del procedimiento')
+                                //->default(fn () => $this->record->blocks->toArray())
+                                ->schema(function () use ($notes) {
+                                    return collect($notes)->map(function ($note) {
+                                        return Forms\Components\Group::make([
+                                            Forms\Components\Hidden::make("titulo_{$note->id}")->default($note->content),
+                                            Forms\Components\Placeholder::make("header_{$note->id}")
+                                                ->label('')
+                                                ->content(fn () => $note->order . '.' . $note->content),
+                                            TinyEditor::make("descripcion_{$note->id}")
+                                                ->label('')
+                                                ->required(),
+                                        ]);
+                                    })->toArray();
+                                })
+                                
+                        ]),
+                        Tabs\Tab::make('Firmas')
+                        ->schema([
 
-                        return Forms\Components\Group::make([
-                            Forms\Components\Hidden::make('titulo')->default($note->content),
-                            Forms\Components\Placeholder::make("header_{$note->id}")
-                                ->label('')
-                                ->content(fn () => $note->order.'.'.$note->content),
-                            TinyEditor::make("descripcion")
-                                ->label('')
-                                ->required(),
-                        ]);
-                    })->toArray();
-                }),
+                            Forms\Components\Repeater::make('firmas')
+                                ->schema([
+                                Forms\Components\Select::make('idUsuario')
+                                ->label('Usuario')
+                                ->options(User::all()->pluck('name', 'id'))
+                                ->searchable(),
+                                Forms\Components\Select::make('IdFirmas')
+                                ->label('Asignacion')
+                                ->options(Firmas::all()->pluck('nombre', 'idfirmas'))
+                                ->searchable(),
+                                ])
+                                ->reorderable(false)
+                                ->addActionLabel('Agregar')
+                                ->columns(2)
+                          
+                        ]),
+                         Tabs\Tab::make('Control de cambios')
+                        ->schema([
+                          
+                        ]),
+                ]),
         ]);
     }
 
@@ -113,8 +155,6 @@ class ProcedimientoResource extends Resource
                 })
                 ->numeric()
                 ->sortable(),
-                Tables\Columns\TextColumn::make('Division')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('FolioCambios')
                     ->label('Folio')
                     ->searchable(),
@@ -135,9 +175,7 @@ class ProcedimientoResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+               
             ]);
     }
 
@@ -158,25 +196,5 @@ class ProcedimientoResource extends Resource
         ];
     }
 
-    protected function mutateFormDataBeforeCreate(array $data): array
-        {
-            logger()->error('mutateFormDataBeforeCreate Error: ' . $data['blocks']);
-                $blocks = $data['blocks'];
-                unset($data['blocks']);
-                $this->creatingProcedureBlocks = $blocks;
-                return $data;
-        }
-
-        protected function afterCreate(): void
-        {
-            logger()->error('afterCreate Error: ');
-
-            foreach ($this->creatingProcedureBlocks as $block) {
-                $this->record->blocks()->create([
-                    'titulo' => $block['titulo'],
-                    'descripcion' => $block['descripcion'],
-                ]);
-            }
-        }
 
 }

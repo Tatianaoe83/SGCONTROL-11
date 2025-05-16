@@ -20,24 +20,24 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class Procedimiento_block extends Model
+class Procedimiento_firmas extends Model
 {
-	protected $table = 'procedimientos_block';
-	protected $primaryKey = 'idprocedimientos_block';
+	protected $table = 'procedimientos_firmas';
+	protected $primaryKey = 'Idprocedimientos_firmas';
 
 	protected $casts = [
-		'idprocedimientos_block' => 'int'
+		'Idprocedimientos_firmas' => 'int'
 	];
 
 	protected $fillable = [
-		'procedimiento_id',
-		'titulo',
-		'descripcion'
+		'IdFirmas',
+		'Idprocedimientos',
+		'idUsuario'
 	];
 
 	public function procedimiento()
 	{
-		return $this->belongsTo(Procedimiento::class, 'procedimiento_id');
+		return $this->belongsTo(Procedimiento::class, 'Idprocedimientos_firmas');
 	}
 
 }

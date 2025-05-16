@@ -30,17 +30,17 @@ class AdminPanelProvider extends PanelProvider
             ->path('dashboard')
             ->login()           
             ->brandLogo(asset('img/logo.png'))
-            ->brandLogoHeight('3rem')
+            ->brandLogoHeight('2rem')
             ->favicon(asset('img/calidad-de-los-datos.png'))
             ->plugins([
                 AuthUIEnhancerPlugin::make()
                 ->showEmptyPanelOnMobile(true)
                 ->formPanelPosition('left')
                 ->mobileFormPanelPosition('bottom')
-                ->formPanelWidth('50%')
-                ->emptyPanelBackgroundImageOpacity('60%')
-                ->formPanelBackgroundColor(Color::Blue, '200')
-                ->emptyPanelBackgroundImageUrl('https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'),
+                ->formPanelWidth('90%')
+                ->emptyPanelBackgroundImageOpacity('90%')
+                ->formPanelBackgroundColor(Color::Blue, '100')
+                ->emptyPanelBackgroundImageUrl(asset('img/calidad2.jpeg')),
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
             ])
             ->colors([

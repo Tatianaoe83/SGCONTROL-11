@@ -44,12 +44,13 @@ class Procedimiento extends Model
 		'Version',
 		'Idestatus',
 		'Division',
-		'UnidadNegocio'
+		'UnidadNegocio',
+		'fechaEmision'
 	];
 
 	public function blocks()
 	{
-		return $this->hasMany(ProcedimientosBlock::class);
+		return $this->hasMany(Procedimiento_block::class, 'procedimiento_id');
 	}
 
 	public function estatusP()
@@ -60,6 +61,11 @@ class Procedimiento extends Model
 	public function proceso()
     {
         return $this->hasMany(\App\Models\Proceso::class, 'IdProcesos');
+    }
+
+	public function procedimiento_firmas()
+    {
+        return $this->hasMany(\App\Models\Procedimiento_firmas::class, 'Idprocedimientos_firmas');
     }
 
 }
