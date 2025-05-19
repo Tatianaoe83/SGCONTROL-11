@@ -17,7 +17,7 @@ class PrismClient
         try {
            
             $response = Prism::text()
-                ->using('openai', 'gpt-4.1-mini')
+                ->using('ollama', 'llama3.1')
                 ->withPrompt($formattedPrompt)
                 ->asStream();  
 

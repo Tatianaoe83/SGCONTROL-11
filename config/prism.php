@@ -22,7 +22,7 @@ return [
             'anthropic_beta' => env('ANTHROPIC_BETA', null),
         ],
         'ollama' => [
-            'url' => env('OLLAMA_URL', 'http://localhost:11434'),
+            'url' => env('OLLAMA_URL', 'http://192.168.2.7:11433'),
         ],
         'mistral' => [
             'api_key' => env('MISTRAL_API_KEY', ''),

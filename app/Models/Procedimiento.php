@@ -33,7 +33,8 @@ class Procedimiento extends Model
 	protected $primaryKey = 'Idprocedimientos';
 
 	protected $casts = [
-		'IdProcesosP' => 'int'
+		'IdProcesosP' => 'int',
+		'blocks' => 'array',
 	];
 
 	protected $fillable = [

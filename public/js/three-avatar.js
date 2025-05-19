@@ -15,7 +15,7 @@ container.appendChild(renderer.domElement);
 
 // Fondo panorámico elegante
 const textureLoader = new THREE.TextureLoader();
-textureLoader.load('/storage/fondos/escena3.jpg', (texture) => {
+textureLoader.load('/storage/fondos/escena5.jpg', (texture) => {
     texture.mapping = THREE.EquirectangularReflectionMapping;
     scene.background = texture;
 });
@@ -24,8 +24,8 @@ textureLoader.load('/storage/fondos/escena3.jpg', (texture) => {
 const loader = new GLTFLoader();
 loader.load('/storage/modelos/scene.gltf', (gltf) => {
     const model = gltf.scene;
-    model.scale.set(2.5, 2.5, 2.5);
-    model.position.set(2, -3, 0);
+    model.scale.set(1.4, 1.4, 1.4);
+    model.position.set(1.7, -1, 0);
     scene.add(model);
 
     /*const model = gltf.scene;
@@ -38,8 +38,8 @@ loader.load('/storage/modelos/scene.gltf', (gltf) => {
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
-camera.position.set(1.5, 1, 3); // posición desde la derecha
-camera.lookAt(new THREE.Vector3(-2, 0, 0)); // enfoca al avatar
+camera.position.set(0, 1, 3); // posición desde la derecha
+camera.lookAt(new THREE.Vector3(-3, 0, 0)); // enfoca al avatar
 
 const animate = () => {
     requestAnimationFrame(animate);

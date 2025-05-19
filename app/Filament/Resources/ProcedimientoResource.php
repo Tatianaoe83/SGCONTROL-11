@@ -82,7 +82,7 @@ class ProcedimientoResource extends Resource
                                 ->deletable(false)
                                 ->reorderable(false)
                                 ->label('Contenido del procedimiento')
-                                //->default(fn () => $this->record->blocks->toArray())
+                                ->default(fn ($get) => $get('blocks') ?? [])
                                 ->schema(function () use ($notes) {
                                     return collect($notes)->map(function ($note) {
                                         return Forms\Components\Group::make([
