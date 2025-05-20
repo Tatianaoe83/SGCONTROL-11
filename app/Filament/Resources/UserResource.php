@@ -55,7 +55,7 @@ class UserResource extends Resource
                     ->searchable()
                     ->color(fn (string $state): string => match ($state) {
                         'Usuario' => 'warning',
-                        'Administrador' => 'danger',
+                        'super_admin' => 'danger',
                     }),
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->dateTime()
