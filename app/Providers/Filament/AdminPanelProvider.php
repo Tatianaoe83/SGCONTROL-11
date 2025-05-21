@@ -32,6 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(asset('img/logo.png'))
             ->brandLogoHeight('2rem')
             ->favicon(asset('img/calidad-de-los-datos.png'))
+            ->sidebarCollapsibleOnDesktop()
             ->plugins([
                 AuthUIEnhancerPlugin::make()
                 ->showEmptyPanelOnMobile(true)

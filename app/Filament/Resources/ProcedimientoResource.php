@@ -18,7 +18,10 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use AmidEsfahani\FilamentTinyEditor\TinyEditor;
-use Filament\Forms\Components\Tabs;
+
+use Filament\Forms\Components\Wizard;
+use Filament\Forms\Components\Actions\Action;
+
 
 
 class ProcedimientoResource extends Resource
@@ -37,91 +40,94 @@ class ProcedimientoResource extends Resource
     public static function form(Form $form): Form
     {
         $notes = Note::where('section', 1)->orderBy('order')->get();
+
+        
     
         return $form->schema([
-            Tabs::make('Procedimiento')
-                ->columnSpan('full')
-                ->tabs([
-                    Tabs\Tab::make('Información general')
-                        ->schema([
-                            Forms\Components\TextInput::make('NombreProcedimiento')
-                                ->required()
-                                ->maxLength(255),
-                            Forms\Components\Select::make('IdProcesosP')
-                                ->label('Proceso')
-                                ->options(Proceso::all()->pluck('DescripcionProcesos', 'IdProcesos'))
-                                ->required()
-                                ->searchable(),
-                            Forms\Components\TextInput::make('FolioProcedimientos')
-                                ->required()
-                                ->maxLength(255),
-                            Forms\Components\TextInput::make('Version')
-                                ->maxLength(255)
-                                ->default(1),
-                            Forms\Components\Select::make('Idestatus')
-                                ->label('Estatus')
-                                ->options(Estatus::all()->pluck('nombre', 'idestatus'))
-                                ->required()
-                                ->default(1)
-                                ->searchable(),
-                            Forms\Components\TextInput::make('Division')
-                                ->required()
-                                ->maxLength(255),
-                            Forms\Components\TextInput::make('UnidadNegocio')
-                                ->label('Unidad de negocio')
-                                ->required()
-                                ->maxLength(255),
-                            Forms\Components\DatePicker::make('fechaEmision')
-                                ->label('Fecha de emision'),
-                                
-                        ]),
-                    Tabs\Tab::make('Contenido del procedimiento')
-                        ->schema([
-                            Forms\Components\Repeater::make('blocks')
-                                ->addable(false)
-                                ->deletable(false)
-                                ->reorderable(false)
-                                ->label('Contenido del procedimiento')
-                                ->default(fn ($get) => $get('blocks') ?? [])
-                                ->schema(function () use ($notes) {
-                                    return collect($notes)->map(function ($note) {
-                                        return Forms\Components\Group::make([
-                                            Forms\Components\Hidden::make("titulo_{$note->id}")->default($note->content),
-                                            Forms\Components\Placeholder::make("header_{$note->id}")
-                                                ->label('')
-                                                ->content(fn () => $note->order . '.' . $note->content),
-                                            TinyEditor::make("descripcion_{$note->id}")
-                                                ->label('')
-                                                ->required(),
-                                        ]);
-                                    })->toArray();
-                                })
-                                
-                        ]),
-                        Tabs\Tab::make('Firmas')
-                        ->schema([
+            Wizard::make()
+            ->columnSpan('full')
+            ->skippable()
+            ->nextAction(
+                fn (Action $action) => $action->label('Siguiente paso'),
+            )
+            ->previousAction(
+                fn (Action $action) => $action->label('Anterior'),
+            )
+            ->schema([
+                Wizard\Step::make('Información general')
+                ->schema([
+                    Forms\Components\Grid::make(2)->schema([
+                        Forms\Components\TextInput::make('NombreProcedimiento')
+                            ->required()
+                            ->maxLength(255),
 
-                            Forms\Components\Repeater::make('firmas')
-                                ->schema([
-                                Forms\Components\Select::make('idUsuario')
-                                ->label('Usuario')
-                                ->options(User::all()->pluck('name', 'id'))
-                                ->searchable(),
-                                Forms\Components\Select::make('IdFirmas')
-                                ->label('Asignacion')
-                                ->options(Firmas::all()->pluck('nombre', 'idfirmas'))
-                                ->searchable(),
-                                ])
-                                ->reorderable(false)
-                                ->addActionLabel('Agregar')
-                                ->columns(2)
-                          
-                        ]),
-                         Tabs\Tab::make('Control de cambios')
-                        ->schema([
-                          
-                        ]),
+                        Forms\Components\Select::make('IdProcesosP')
+                            ->label('Proceso')
+                            ->options(Proceso::all()->pluck('DescripcionProcesos', 'IdProcesos'))
+                            ->required()
+                            ->searchable(),
+
+                        Forms\Components\TextInput::make('FolioProcedimientos')
+                            ->required()
+                            ->maxLength(255),
+
+                        Forms\Components\TextInput::make('Version')
+                            ->maxLength(255)
+                            ->default(1),
+
+                        Forms\Components\ToggleButtons::make('Idestatus')
+                            ->label('Estatus')
+                            ->columns(4)
+                            ->required()
+                            ->options(Estatus::orderBy('idestatus')->pluck('nombre', 'idestatus')->toArray()),
+
+
+                        Forms\Components\TextInput::make('Division')
+                            ->required()
+                            ->maxLength(255),
+
+                        Forms\Components\TextInput::make('UnidadNegocio')
+                            ->label('Unidad de negocio')
+                            ->required()
+                            ->maxLength(255),
+
+                        Forms\Components\DatePicker::make('fechaEmision')
+                            ->label('Fecha de emisión'),
+                    ]),
                 ]),
+                Wizard\Step::make('Contenido del procedimiento')
+                    ->schema([
+                        Forms\Components\Repeater::make('blocks')
+                            ->addable(false)
+                            ->deletable(false)
+                            ->reorderable(false)
+                            ->label('Contenido del procedimiento')
+                            ->schema(function () use ($notes) {
+                                return collect($notes)->map(function ($note) {
+                                    \Log::info($note);
+                                    return Forms\Components\Group::make([   
+                                        Forms\Components\Hidden::make("titulo_{$note->idNote}")->default($note->content),   
+                                        Forms\Components\Placeholder::make("header_{$note->idNote}")
+                                            ->label('')
+                                            ->content(fn () => $note->order . '.' . $note->content),
+                                        TinyEditor::make("descripcion_{$note->idNote}")
+                                            ->label('')
+                                            ->required(),
+                                    ]);
+                                })->toArray();
+                            })
+                    ]),
+                Wizard\Step::make('Firmas')
+                    ->schema([
+                        Forms\Components\Repeater::make('firmas')
+                            ->schema([
+                                Forms\Components\Select::make('firma_id')
+                                    ->label('Firma')
+                                    ->options(Firmas::all()->pluck('nombre', 'id'))
+                                    ->required(),
+                            ])
+                    ]),
+            ]),
         ]);
     }
 
