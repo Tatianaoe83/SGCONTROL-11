@@ -16,4 +16,17 @@ class EditProcedimiento extends EditRecord
             Actions\ViewAction::make(),
         ];
     }
+    protected function afterSave(): void
+    {
+        \App\Models\Procedimiento_block::where('procedimiento_id', $this->record->Idprocedimientos)->delete();
+
+        foreach ($this->data['blocks'] as $block) {
+            \App\Models\Procedimiento_block::create([
+                'procedimiento_id' => $this->record->Idprocedimientos,
+                'titulo' => $block['titulo'],
+                'descripcion' => $block['descripcion'],
+            ]);
+        }
+    }
+
 }

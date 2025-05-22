@@ -40,8 +40,6 @@ class ProcedimientoResource extends Resource
     public static function form(Form $form): Form
     {
         $notes = Note::where('section', 1)->orderBy('order')->get();
-
-        
     
         return $form->schema([
             Wizard::make()
@@ -96,36 +94,60 @@ class ProcedimientoResource extends Resource
                     ]),
                 ]),
                 Wizard\Step::make('Contenido del procedimiento')
-                    ->schema([
-                        Forms\Components\Repeater::make('blocks')
-                            ->addable(false)
-                            ->deletable(false)
-                            ->reorderable(false)
-                            ->label('Contenido del procedimiento')
-                            ->schema(function () use ($notes) {
-                                return collect($notes)->map(function ($note) {
-                                    \Log::info($note);
-                                    return Forms\Components\Group::make([   
-                                        Forms\Components\Hidden::make("titulo_{$note->idNote}")->default($note->content),   
-                                        Forms\Components\Placeholder::make("header_{$note->idNote}")
-                                            ->label('')
-                                            ->content(fn () => $note->order . '.' . $note->content),
-                                        TinyEditor::make("descripcion_{$note->idNote}")
-                                            ->label('')
-                                            ->required(),
-                                    ]);
-                                })->toArray();
-                            })
-                    ]),
+                ->schema([
+                    Forms\Components\Repeater::make('blocks')
+                        ->addable(false)
+                        ->deletable(false)
+                        ->reorderable(false)
+                        ->reorderable(false)
+                        ->label('Contenido del procedimiento')
+                        ->schema([
+                            Forms\Components\Hidden::make('titulo'),
+                            Forms\Components\Placeholder::make('header')
+                                ->label('')
+                                ->content(fn ($get) => $get('titulo')),
+                            TinyEditor::make('descripcion')
+                                ->label('')
+                                ->required(),
+                        ])
+                        ->afterStateHydrated(function (Forms\Components\Repeater $component, $state, $record) {
+                            if ($record && $record->exists) {
+                                $blocks = $record->blocks()->get()->map(fn ($block) => [
+                                    'titulo' => $block->titulo,
+                                    'descripcion' => $block->descripcion,
+                                ])->toArray();
+
+                                $component->state($blocks);
+                            } else {
+                              
+                                $notes = \App\Models\Note::where('section', 1)->orderBy('order')->get();
+
+                                $component->state(
+                                    collect($notes)->map(fn ($note) => [
+                                        'titulo' => $note->order . '. ' . $note->content,
+                                        'descripcion' => '',
+                                    ])->toArray()
+                                );
+                            }
+                        }),
+                ]),
                 Wizard\Step::make('Firmas')
                     ->schema([
                         Forms\Components\Repeater::make('firmas')
-                            ->schema([
-                                Forms\Components\Select::make('firma_id')
-                                    ->label('Firma')
-                                    ->options(Firmas::all()->pluck('nombre', 'id'))
-                                    ->required(),
-                            ])
+                                ->schema([
+                                Forms\Components\Select::make('idUsuario')
+                                ->label('Usuario')
+                                ->options(User::all()->pluck('name', 'id'))
+                                ->searchable(),
+                                Forms\Components\Select::make('IdFirmas')
+                                ->label('Asignacion')
+                                ->options(Firmas::all()->pluck('nombre', 'idfirmas'))
+                                ->searchable(),
+                                ])
+                                ->reorderable(false)
+                                ->addActionLabel('Agregar')
+                                ->columns(2)
+                              
                     ]),
             ]),
         ]);
