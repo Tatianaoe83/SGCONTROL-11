@@ -19,6 +19,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
+use App\Filament\Resources\ViewResource\Widgets\PlantillasGenerale;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -30,7 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('dashboard')
             ->login()           
             ->brandLogo(asset('img/logo.png'))
-            ->brandLogoHeight('2rem')
+            ->brandLogoHeight('2.8rem')
             ->favicon(asset('img/calidad-de-los-datos.png'))
             ->sidebarCollapsibleOnDesktop()
             ->plugins([
@@ -38,10 +39,10 @@ class AdminPanelProvider extends PanelProvider
                 ->showEmptyPanelOnMobile(true)
                 ->formPanelPosition('left')
                 ->mobileFormPanelPosition('bottom')
-                ->formPanelWidth('90%')
+                ->formPanelWidth('100%')
                 ->emptyPanelBackgroundImageOpacity('90%')
                 ->formPanelBackgroundColor(Color::Blue, '100')
-                ->emptyPanelBackgroundImageUrl(asset('img/calidad2.jpeg')),
+                ->emptyPanelBackgroundImageUrl(asset('img/calidad3.jpg')),
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
             ])
             ->colors([
@@ -56,6 +57,7 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+                PlantillasGenerale::class, 
             ])
             ->middleware([
                 EncryptCookies::class,

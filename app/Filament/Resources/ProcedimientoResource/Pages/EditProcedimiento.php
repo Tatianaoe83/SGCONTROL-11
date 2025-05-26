@@ -5,6 +5,8 @@ namespace App\Filament\Resources\ProcedimientoResource\Pages;
 use App\Filament\Resources\ProcedimientoResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Actions\Action;
+
 
 class EditProcedimiento extends EditRecord
 {
@@ -13,7 +15,12 @@ class EditProcedimiento extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
+          
+            Action::make('view-reporte')
+            ->icon('heroicon-o-eye')
+            ->url(fn () => route('procedimiento.view-reporte', ['record' => $this->record]))
+            ->openUrlInNewTab(),
+            
         ];
     }
     protected function afterSave(): void

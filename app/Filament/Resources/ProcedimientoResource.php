@@ -39,7 +39,6 @@ class ProcedimientoResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $notes = Note::where('section', 1)->orderBy('order')->get();
     
         return $form->schema([
             Wizard::make()
@@ -134,19 +133,29 @@ class ProcedimientoResource extends Resource
                 Wizard\Step::make('Firmas')
                     ->schema([
                         Forms\Components\Repeater::make('firmas')
-                                ->schema([
+                            ->schema([
                                 Forms\Components\Select::make('idUsuario')
-                                ->label('Usuario')
-                                ->options(User::all()->pluck('name', 'id'))
-                                ->searchable(),
+                                    ->label('Usuario')
+                                    ->options(User::all()->pluck('name', 'id'))
+                                    ->searchable()
+                                    ->afterStateHydrated(function ($component, $state) {
+                                        $component->state($state);
+                                        \Log::info($state);
+                                    }),
                                 Forms\Components\Select::make('IdFirmas')
-                                ->label('Asignacion')
-                                ->options(Firmas::all()->pluck('nombre', 'idfirmas'))
-                                ->searchable(),
-                                ])
-                                ->reorderable(false)
-                                ->addActionLabel('Agregar')
-                                ->columns(2)
+                                    ->label('Asignación')
+                                    ->options(Firmas::all()->pluck('nombre', 'idfirmas'))
+                                    ->searchable()
+                                    ->afterStateHydrated(function ($component, $state) {
+                                        $component->state($state); 
+                                    }),
+                            ])
+                            ->reorderable(false)
+                            ->addActionLabel('Agregar')
+                            ->columns(2)
+                            ->afterStateHydrated(function ($component, $state) {
+                                $component->state($state);
+                            }),
                               
                     ]),
             ]),
@@ -185,15 +194,7 @@ class ProcedimientoResource extends Resource
                 ->sortable(),
                 Tables\Columns\TextColumn::make('FolioCambios')
                     ->label('Folio')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->searchable()
             ])
             ->filters([
                 //
@@ -221,6 +222,7 @@ class ProcedimientoResource extends Resource
             'create' => Pages\CreateProcedimiento::route('/create'),
             'view' => Pages\ViewProcedimiento::route('/{record}'),
             'edit' => Pages\EditProcedimiento::route('/{record}/edit'),
+            'view-reporte' => Pages\ViewReporte::route('/{record}/view-reporte'),
         ];
     }
 

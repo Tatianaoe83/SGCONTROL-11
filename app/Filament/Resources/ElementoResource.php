@@ -6,6 +6,7 @@ use App\Filament\Resources\ElementoResource\Pages;
 use App\Filament\Resources\ElementoResource\RelationManagers;
 use App\Models\Elemento;
 use App\Models\Tiposelemento;
+use App\Models\Procedimiento;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -36,16 +37,17 @@ class ElementoResource extends Resource
                     ->required()
                     ->searchable(),
                 Forms\Components\TextInput::make('Control')
-                    ->required()
+                    ->default('Interno')
                     ->maxLength(11),
-                Forms\Components\TextInput::make('IdProcedimiento')
-                    ->required()
-                    ->numeric(),
+                Forms\Components\Select::make('IdProcedimiento')
+                    ->label('Procedimiento')
+                    ->options(Procedimiento::all()->pluck('NombreProcedimiento', 'Idprocedimientos'))
+                    ->searchable(),
                 Forms\Components\TextInput::make('CodigoElemento')
-                    ->required()
+                    ->label('Código Elemento')
                     ->maxLength(15),
                 Forms\Components\TextInput::make('DescripcionElemento')
-                    ->required()
+                    ->label('Descripción Elemento')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('IdPuestoEjecutor')
                     ->required()
@@ -53,16 +55,27 @@ class ElementoResource extends Resource
                 Forms\Components\TextInput::make('IdPuestoResguardo')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('IdMedioSoporteE')
+                Forms\Components\Select::make('IdMedioSoporteE')
+                    ->label('Medio Soporte')
+                    ->options([
+                        'N/A' => 'N/A',
+                        'Físico' => 'Físico',
+                        'Digital' => 'Digital',
+                        'Híbrido' => 'Híbrido',
+                    ])
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('IdUbicacionE')
+                    ->searchable(),
+                Forms\Components\Textarea::make('IdUbicacionE')
+                    ->label('Ubicación')
+                    ->rows(4)
                     ->required()
                     ->maxLength(100),
                 Forms\Components\TextInput::make('VersionElemento')
+                    ->label('Versión Elemento')
                     ->required()
                     ->numeric(),
                 Forms\Components\DatePicker::make('FechaVersionElemento')
+                    ->label('Fecha Versión Elemento')
                     ->required(),
                 Forms\Components\TextInput::make('CodigoFormato')
                     ->required()
@@ -71,13 +84,15 @@ class ElementoResource extends Resource
                     ->required()
                     ->maxLength(11),
                 Forms\Components\TextInput::make('VersionFormato')
+                    ->label('Versión Formato')
                     ->required()
                     ->numeric(),
                 Forms\Components\DatePicker::make('FechaVersionFormato')
+                    ->label('Fecha Versión Formato')
                     ->required(),
-                Forms\Components\TextInput::make('documentoReferencia')
-                    ->required()
-                    ->maxLength(455),
+                Forms\Components\FileUpload::make('documentoReferencia')
+                    ->label('Documento Referencia')
+                    ->storeFileNamesIn('attachment_file_names'),
             ]);
     }
 
@@ -91,13 +106,13 @@ class ElementoResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('Control')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('IdProcedimiento')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('CodigoElemento')
+                Tables\Columns\TextColumn::make('procedimiento.NombreProcedimiento')
+                    ->label('Procedimiento')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('DescripcionElemento')
-                    ->searchable(),
+                    ->label('Descripción Elemento')
+                    ->wrap()
+                ->searchable(),
                 Tables\Columns\TextColumn::make('IdPuestoEjecutor')
                     ->numeric()
                     ->sortable(),
@@ -105,35 +120,9 @@ class ElementoResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('IdMedioSoporteE')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('IdUbicacionE')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('VersionElemento')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('FechaVersionElemento')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('CodigoFormato')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('Formato')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('VersionFormato')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('FechaVersionFormato')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('documentoReferencia')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Medio Soporte')
+                    ->searchable()
+             
             ])
             ->filters([
                 //
