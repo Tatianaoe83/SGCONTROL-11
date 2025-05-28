@@ -90,6 +90,7 @@ class AdminPanelProvider extends PanelProvider
                         'default' => 1,
                         'sm' => 2,
                     ]),
-            ]);
+            ])
+            ->viteTheme('resources/css/filament/dashboard/theme.css');
     }
 }

@@ -1,6 +1,22 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
-@config 'tailwind.config.js';
+@config './tailwind.config.js';
+
+
+
+
+/* Estilos personalizados para Filament */
+.fi-sidebar {
+    @apply bg-white dark:bg-gray-800;
+}
+
+.fi-main {
+    @apply bg-gray-50 dark:bg-gray-900;
+}
+
+.fi-topbar {
+    @apply bg-white dark:bg-gray-800;
+}
 
 .fi-sidebar-item-active > a { 
     @apply bg-indigo-500;
