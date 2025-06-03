@@ -138,25 +138,27 @@ class ProcedimientoResource extends Resource
                                     ->label('Usuario')
                                     ->options(User::all()->pluck('name', 'id'))
                                     ->searchable()
-                                    ->afterStateHydrated(function ($component, $state) {
-                                        $component->state($state);
-                                        \Log::info($state);
-                                    }),
+                                    ->required(),
                                 Forms\Components\Select::make('IdFirmas')
                                     ->label('Asignación')
                                     ->options(Firmas::all()->pluck('nombre', 'idfirmas'))
                                     ->searchable()
-                                    ->afterStateHydrated(function ($component, $state) {
-                                        $component->state($state); 
-                                    }),
+                                    ->required(),
                             ])
                             ->reorderable(false)
                             ->addActionLabel('Agregar')
                             ->columns(2)
-                            ->afterStateHydrated(function ($component, $state) {
-                                $component->state($state);
+                            ->afterStateHydrated(function ($component, $state, $record) {
+                                if ($record && $record->exists) {
+                                    $firmas = $record->procedimiento_firmas()->get()->map(function ($firma) {
+                                        return [
+                                            'idUsuario' => $firma->idUsuario,
+                                            'IdFirmas' => $firma->IdFirmas,
+                                        ];
+                                    })->toArray();
+                                    $component->state($firmas);
+                                }
                             }),
-                              
                     ]),
             ]),
         ]);

@@ -20,6 +20,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 ##use App\Filament\Resources\ViewResource\Widgets\PlantillasGenerale;
+use Filament\Navigation\MenuItem;
+use App\Filament\Pages\PropuestaMejora;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -52,12 +54,19 @@ class AdminPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Pages\Dashboard::class,
+                //Pages\Auth\EditProfile::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 ##Widgets\FilamentInfoWidget::class,
                 ##PlantillasGenerale::class, 
+            ])
+            ->userMenuItems([
+                MenuItem::make()
+                ->label('Propuesta de mejora')
+                ->url(fn (): string => route('filament.dashboard.pages.propuesta-mejora'))
+                ->icon('heroicon-o-light-bulb')
             ])
             ->middleware([
                 EncryptCookies::class,

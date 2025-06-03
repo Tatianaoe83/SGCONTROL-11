@@ -60,12 +60,12 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
 
-        \Log::info('canAccessPanel called for user ID: ' . $panel->getId());
+        //\Log::info('canAccessPanel called for user ID: ' . $panel->getId());
         if ($panel->getId() == 'super-admin') {
-            \Log::info('canAccessPanel called for user ID super admin: ' . $this->id);
+          //  \Log::info('canAccessPanel called for user ID super admin: ' . $this->id);
             return str_ends_with($this->email, '@proser.com.mx') && $this->hasVerifiedEmail();
         } elseif ($panel->getId() == 'usuario') {
-            \Log::info('canAccessPanel called for user ID usuario: ' . $this->id);
+            //\Log::info('canAccessPanel called for user ID usuario: ' . $this->id);
             return str_ends_with($this->email, '@proser.com.mx') && $this->hasVerifiedEmail();
         }   
 

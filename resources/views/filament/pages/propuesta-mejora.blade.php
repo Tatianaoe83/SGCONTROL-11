@@ -1,9 +1,7 @@
-
 <x-filament::page>
-    <form wire:submit.prevent="submit" class="space-y-6 max-w-xl">
+    <form wire:submit.prevent="submit">
         {{ $this->form }}
-
-        <x-filament::button type="submit" color="primary">
+        <x-filament::button type="submit" class="mt-4">
             Enviar propuesta
         </x-filament::button>
     </form>

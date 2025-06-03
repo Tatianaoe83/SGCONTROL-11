@@ -3,20 +3,19 @@ namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
 use Filament\Forms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Components\Textarea;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\ContactoGeneralMail;
 use Filament\Notifications\Notification;
 
-class PropuestaMejora extends Page implements HasForms
+class PropuestaMejora extends Page implements Forms\Contracts\HasForms
 {
-    use InteractsWithForms;
+    use Forms\Concerns\InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
-    protected static ?string $navigationLabel = 'Propuesta de Mejora';
-    protected static ?string $title = 'Propuesta de Mejora';
+    protected static ?string $navigationIcon = 'heroicon-o-light-bulb';
     protected static string $view = 'filament.pages.propuesta-mejora';
+    protected static ?string $title = 'Propuesta de mejora';
+    protected static ?string $navigationGroup = 'Soporte';
+    protected static bool $shouldRegisterNavigation = false; 
 
     public ?array $data = [];
 
@@ -25,58 +24,37 @@ class PropuestaMejora extends Page implements HasForms
         $this->form->fill();
     }
 
-    protected function getFormSchema(): array
+    public function form(Forms\Form $form): Forms\Form
     {
-        return [
-            Forms\Components\TextInput::make('nombre')
-                ->label('Tu nombre')
-                ->required()
-                ->maxLength(255),
-            
-            Forms\Components\TextInput::make('email')
-                ->label('Tu correo')
-                ->email()
-                ->required(),
-            
-            Forms\Components\Textarea::make('mensaje')
-                ->label('Tu propuesta de mejora')
-                ->rows(6)
-                ->required(),
-        ];
+        return $form
+            ->schema([
+                Textarea::make('message')
+                    ->label('Tu propuesta')
+                    ->required()
+                    ->rows(5),
+            ])
+            ->statePath('data');
     }
 
-    protected function getFormModel(): string
+    public function submit()
     {
-        return static::class;
-    }
-
-    protected function getFormStatePath(): string
-    {
-        return 'data';
-    }
-
-    public function submit(): void
-    {
-        $datos = $this->form->getState();
-
         try {
-            Mail::to('tordonez@proser.com.mx')->send(new ContactoGeneralMail($datos));
+            Mail::raw($this->data['message'], function ($message) {
+                $message->to('tordonez@proser.com.mx')->subject('Propuesta de mejora');
+            });
 
             Notification::make()
                 ->title('¡Propuesta enviada!')
-                ->body('Gracias por tu propuesta de mejora.')
                 ->success()
                 ->send();
 
-            $this->form->fill(); // Limpia el formulario
-        } catch (\Throwable $e) {
+            $this->form->fill();
+        } catch (\Exception $e) {
             Notification::make()
-                ->title('Error al enviar')
-                ->body('No se pudo enviar tu propuesta. Inténtalo más tarde.')
+                ->title('Error al enviar propuesta')
+                ->body($e->getMessage())
                 ->danger()
                 ->send();
-
-            \Log::error('Error al enviar propuesta de mejora: ' . $e->getMessage());
         }
     }
 }

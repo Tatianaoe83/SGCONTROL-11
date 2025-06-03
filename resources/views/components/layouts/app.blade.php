@@ -17,6 +17,7 @@
 
         @filamentStyles
         @vite('resources/css/app.css')
+        @livewireStyles
     </head>
 
     <body class="antialiased">
@@ -24,5 +25,9 @@
 
         @filamentScripts
         @vite('resources/js/app.js')
+        @livewireScripts
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+       
     </body>
 </html>

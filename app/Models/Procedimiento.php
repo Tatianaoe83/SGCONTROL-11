@@ -66,7 +66,7 @@ class Procedimiento extends Model
 
 	public function procedimiento_firmas()
     {
-        return $this->hasMany(\App\Models\Procedimiento_firmas::class, 'Idprocedimientos_firmas');
+        return $this->hasMany(\App\Models\Procedimiento_firmas::class, 'Idprocedimientos', 'Idprocedimientos');
     }
 
 }

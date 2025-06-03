@@ -13,7 +13,7 @@ class Note extends Model
 	protected $primaryKey = 'idNote';
 
     protected $fillable = [
-        'orden',
+        'order',
         'content',
         'section',
     ];
