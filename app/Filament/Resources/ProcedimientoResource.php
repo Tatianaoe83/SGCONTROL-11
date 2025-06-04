@@ -179,24 +179,29 @@ class ProcedimientoResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('Version')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('estatusP.nombre')
-                ->label('Estatus')
-                ->badge()
-                ->color(fn (string $state): string => match ($state) {
-                    
-                    'Proceso' => 'gray',
-                    'Liberado' => 'info',
-                    'Revision' => 'warning',
-                    'Firmas' => 'primary',
-                    'Portal' => 'success',
-                    'Detenido' => 'danger',
-                    'Cerrado' => 'danger',
-                })
-                ->numeric()
-                ->sortable(),
+                Tables\Columns\TextColumn::make('Idestatus')
+                    ->label('Estatus')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => Estatus::find($state)?->nombre ?? '')
+                    ->color(fn ($state) => match ($state) {
+                        1 => 'gray',    // Proceso
+                        2 => 'info',    // Liberado
+                        3 => 'warning', // Revision
+                        4 => 'primary', // Firmas
+                        5 => 'success', // Portal
+                        6 => 'danger',  // Detenido
+                        7 => 'danger',  // Cerrado
+                        default => 'gray',
+                    })
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('FolioCambios')
                     ->label('Folio')
-                    ->searchable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('procedimiento_firmas_count')
+                    ->label('Firmas')
+                    ->counts('procedimiento_firmas')
+                    ->formatStateUsing(fn (string $state): string => "{$state}")
+                    ->alignCenter()
             ])
             ->filters([
                 //

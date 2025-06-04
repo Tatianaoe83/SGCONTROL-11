@@ -92,6 +92,8 @@ class ElementoResource extends Resource
                     ->required(),
                 Forms\Components\FileUpload::make('documentoReferencia')
                     ->label('Documento Referencia')
+                    ->directory('documentos')
+                    ->preserveFilenames()
                     ->storeFileNamesIn('attachment_file_names'),
             ]);
     }
