@@ -19,9 +19,9 @@ return [
         'fqcn' => 'App\\Models\\User',
     ],
 
-    'super_admin' => [
+    'admin' => [
         'enabled' => true,
-        'name' => 'super_admin',
+        'name' => 'admin',
         'define_via_gate' => false,
         'intercept_gate' => 'before', // after
     ],
@@ -34,17 +34,10 @@ return [
     'permission_prefixes' => [
         'resource' => [
             'view',
-            'view_any',
             'create',
             'update',
-            'restore',
-            'restore_any',
-            'replicate',
             'reorder',
             'delete',
-            'delete_any',
-            'force_delete',
-            'force_delete_any',
         ],
 
         'page' => 'page',
