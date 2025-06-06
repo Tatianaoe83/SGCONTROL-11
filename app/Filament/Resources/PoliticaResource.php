@@ -2,15 +2,14 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ProcedimientoResource\Pages;
-use App\Filament\Resources\ProcedimientoResource\RelationManagers;
-use App\Models\Procedimiento;
+use App\Filament\Resources\PoliticaResource\Pages;
+use App\Filament\Resources\PoliticaResource\RelationManagers;
+use App\Models\Politica;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use App\Models\Note;
-use App\Models\Proceso;
 use App\Models\Estatus;
 use App\Models\User;
 use App\Models\Firmas;
@@ -23,17 +22,17 @@ use Filament\Forms\Components\Actions\Action;
 
 
 
-class ProcedimientoResource extends Resource
+class PoliticaResource extends Resource
 {
-    protected static ?string $model = Procedimiento::class;
+    protected static ?string $model = Politica::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Gestión de calidad';
 
-    protected static ?string $navigationLabel = 'Procedimientos';
+    protected static ?string $navigationLabel = 'Políticas';
    
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
 
     public static function form(Form $form): Form
@@ -53,17 +52,18 @@ class ProcedimientoResource extends Resource
                 Wizard\Step::make('Información general')
                 ->schema([
                     Forms\Components\Grid::make(3)->schema([
-                        Forms\Components\TextInput::make('NombreProcedimiento')
+                        Forms\Components\TextInput::make('Nombrepolitica')
+                            ->label('Nombre de la política')
                             ->required()
                             ->maxLength(255),
 
-                        Forms\Components\Select::make('IdProcesosP')
-                            ->label('Proceso')
-                            ->options(Proceso::all()->pluck('DescripcionProcesos', 'IdProcesos'))
+                            Forms\Components\TextInput::make('NombreArea')
+                            ->label('Área')
                             ->required()
-                            ->searchable(),
+                            ->maxLength(255),
 
-                        Forms\Components\TextInput::make('FolioProcedimientos')
+                        Forms\Components\TextInput::make('Foliopoliticas')
+                            ->label('Folio de la política')
                             ->required()
                             ->maxLength(255),
 
@@ -99,14 +99,14 @@ class ProcedimientoResource extends Resource
                             ->maxLength(255),
                     ]),
                 ]),
-                Wizard\Step::make('Contenido del procedimiento')
+                Wizard\Step::make('Contenido de la política')
                 ->schema([
                     Forms\Components\Repeater::make('blocks')
                         ->addable(false)
                         ->deletable(false)
                         ->reorderable(false)
                         ->reorderable(false)
-                        ->label('Contenido del procedimiento')
+                        ->label('Contenido de la política')
                         ->schema([
                             Forms\Components\Hidden::make('titulo'),
                             Forms\Components\Placeholder::make('header')
@@ -118,7 +118,7 @@ class ProcedimientoResource extends Resource
                         ])
                         ->afterStateHydrated(function (Forms\Components\Repeater $component, $state, $record) {
                             if ($record && $record->exists) {
-                                $blocks = $record->blocks()->get()->map(fn ($block) => [
+                                $blocks = $record->blocksPolitica()->get()->map(fn ($block) => [
                                     'titulo' => $block->titulo,
                                     'descripcion' => $block->descripcion,
                                 ])->toArray();
@@ -126,7 +126,7 @@ class ProcedimientoResource extends Resource
                                 $component->state($blocks);
                             } else {
                               
-                                $notes = \App\Models\Note::where('section', 1)->orderBy('order')->get();
+                                $notes = \App\Models\Note::where('section', 2)->orderBy('order')->get();
 
                                 $component->state(
                                     collect($notes)->map(fn ($note) => [
@@ -157,7 +157,7 @@ class ProcedimientoResource extends Resource
                             ->columns(2)
                             ->afterStateHydrated(function ($component, $state, $record) {
                                 if ($record && $record->exists) {
-                                    $firmas = $record->procedimiento_firmas()->get()->map(function ($firma) {
+                                    $firmas = $record->politica_firmas()->get()->map(function ($firma) {
                                         return [
                                             'idUsuario' => $firma->idUsuario,
                                             'IdFirmas' => $firma->IdFirmas,
@@ -176,13 +176,12 @@ class ProcedimientoResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('NombreProcedimiento')
+                Tables\Columns\TextColumn::make('Nombrepolitica')
                 ->searchable(),
-                Tables\Columns\TextColumn::make('proceso.DescripcionProcesos')
-                ->label('Proceso')
-                ->numeric()
+                Tables\Columns\TextColumn::make('NombreArea')
+                ->label('Área')
                 ->sortable(),
-                Tables\Columns\TextColumn::make('FolioProcedimientos')
+                Tables\Columns\TextColumn::make('Foliopoliticas')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('Version')
                     ->searchable(),
@@ -204,9 +203,9 @@ class ProcedimientoResource extends Resource
                 Tables\Columns\TextColumn::make('FolioCambios')
                     ->label('Folio')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('procedimiento_firmas_count')
+                Tables\Columns\TextColumn::make('politica_firmas_count')
                     ->label('Firmas')
-                    ->counts('procedimiento_firmas')
+                    ->counts('politica_firmas')
                     ->formatStateUsing(fn (string $state): string => "{$state}")
                     ->alignCenter()
             ])
@@ -217,7 +216,7 @@ class ProcedimientoResource extends Resource
                 Tables\Actions\Action::make('view-reporte')
                 ->label('Documento')
                 ->icon('heroicon-o-document-text')
-                ->url(fn (Procedimiento $record) => ProcedimientoResource::getUrl('view-reporte', ['record' => $record]))
+                ->url(fn (Politica $record) => PoliticaResource::getUrl('view-reporte-politica', ['record' => $record]))
                 ->openUrlInNewTab(),
                 Tables\Actions\EditAction::make(),
             ])
@@ -227,7 +226,7 @@ class ProcedimientoResource extends Resource
     }
 
     public static function getRelations(): array
-    {
+    {   
         return [
             //
         ];
@@ -236,10 +235,10 @@ class ProcedimientoResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProcedimientos::route('/'),
-            'create' => Pages\CreateProcedimiento::route('/create'),
-            'edit' => Pages\EditProcedimiento::route('/{record}/edit'),
-            'view-reporte' => Pages\ViewReporte::route('/{record}/view-reporte'),
+            'index' => Pages\ListPoliticas::route('/'),
+            'create' => Pages\CreatePolitica::route('/create'),
+            'edit' => Pages\EditPolitica::route('/{record}/edit'),
+            'view-reporte-politica' => Pages\ViewReportePolitica::route('/{record}/view-reporte-politica'),
         ];
     }
 

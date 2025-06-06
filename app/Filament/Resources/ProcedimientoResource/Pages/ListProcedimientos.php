@@ -16,4 +16,17 @@ class ListProcedimientos extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    protected function getTableActions(): array
+    {
+        return [
+            Tables\Actions\ViewAction::make(),
+            Tables\Actions\EditAction::make(),
+            Tables\Actions\Action::make('reporte')
+                ->label('Reporte')
+                ->icon('heroicon-o-document-text')
+                ->url(fn ($record) => route('filament.admin.resources.procedimientos.view-reporte', ['record' => $record->getKey()]))
+                ->openUrlInNewTab(),
+        ];
+    }
 }

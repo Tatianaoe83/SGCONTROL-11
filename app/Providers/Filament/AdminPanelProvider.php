@@ -18,8 +18,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
-use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
-##use App\Filament\Resources\ViewResource\Widgets\PlantillasGenerale;
 use Filament\Navigation\MenuItem;
 use App\Filament\Pages\PropuestaMejora;
 
@@ -37,14 +35,6 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(asset('img/calidad-de-los-datos.png'))
             ->sidebarCollapsibleOnDesktop()
             ->plugins([
-                AuthUIEnhancerPlugin::make()
-                ->showEmptyPanelOnMobile(true)
-                ->formPanelPosition('left')
-                ->mobileFormPanelPosition('bottom')
-                ->formPanelWidth('100%')
-                ->emptyPanelBackgroundImageOpacity('90%')
-                ->formPanelBackgroundColor(Color::Blue, '100')
-                ->emptyPanelBackgroundImageUrl(asset('img/calidad3.jpg')),
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
             ])
             ->colors([

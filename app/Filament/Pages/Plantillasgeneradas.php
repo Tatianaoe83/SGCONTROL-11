@@ -23,7 +23,7 @@ class Plantillasgeneradas extends Page implements Tables\Contracts\HasTable
 
     protected static ?string $title = 'Plantillas generales';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-s-table-cells';
 
 
     protected static ?string $navigationGroup = 'Gestión de calidad';

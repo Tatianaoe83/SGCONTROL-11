@@ -17,7 +17,7 @@ class ProcesoResource extends Resource
 {
     protected static ?string $model = Proceso::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-newspaper';
+    protected static ?string $navigationIcon = 'heroicon-c-arrow-path-rounded-square';
 
     protected static ?string $navigationLabel = 'Procesos';
 

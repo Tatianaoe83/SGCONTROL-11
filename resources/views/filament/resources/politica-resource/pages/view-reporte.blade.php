@@ -2,7 +2,7 @@
     <div class="w-full max-w-5xl mx-auto px-4">
         <div class="flex items-center justify-between mb-8 border-b pb-6">
             <img src="{{ asset('img/logo.png') }}" alt="Logo" class="h-16 object-contain">
-            <div class="bg-gray-400 text-black px-8 py-4 text-lg font-bold tracking-wide uppercase">Manual de Procedimientos</div>
+            <div class="bg-gray-400 text-black px-8 py-4 text-lg font-bold tracking-wide uppercase">Manual de políticas</div>
         </div>
 
         <div class="mb-10">
@@ -10,57 +10,40 @@
                 <div class="space-y-3">
                     <p class="flex justify-between border-b pb-2">
                         <span class="font-semibold text-gray-700">Folio:</span>
-                        <span class="text-gray-900">{{ $this->procedimiento->FolioProcedimientos }}</span>
+                        <span class="text-gray-900">{{ $this->politica->Foliopoliticas }}</span>
                     </p>
                     <p class="flex justify-between border-b pb-2">
                         <span class="font-semibold text-gray-700">Versión:</span>
-                        <span class="text-gray-900">{{ $this->procedimiento->Version }}</span>
+                        <span class="text-gray-900">{{ $this->politica->Version }}</span>
                     </p>
                     <p class="flex justify-between border-b pb-2">
                         <span class="font-semibold text-gray-700">División:</span>
-                        <span class="text-gray-900">{{ $this->procedimiento->Division }}</span>
+                        <span class="text-gray-900">{{ $this->politica->Division }}</span>
                     </p>
                     <p class="flex justify-between border-b pb-2">
                         <span class="font-semibold text-gray-700">Unidad de Negocio:</span>
-                        <span class="text-gray-900">{{ $this->procedimiento->UnidadNegocio }}</span>
+                        <span class="text-gray-900">{{ $this->politica->UnidadNegocio }}</span>
                     </p>
                 </div>
                 <div class="space-y-3">
                     <p class="flex justify-between border-b pb-2">
                         <span class="font-semibold text-gray-700">Fecha de Emisión:</span>
-                        <span class="text-gray-900">{{ $this->procedimiento->fechaEmision }}</span>
+                        <span class="text-gray-900">{{ $this->politica->fechaEmision }}</span>
                     </p>
                     <p class="flex justify-between border-b pb-2">
                         <span class="font-semibold text-gray-700">Proceso:</span>
-                        <span class="text-gray-900">{{ $this->procedimiento->proceso[0]->DescripcionProcesos ?? 'Sin proceso' }}</span>
+                        <span class="text-gray-900">{{ $this->politica->proceso[0]->DescripcionProcesos ?? 'Sin proceso' }}</span>
                     </p>
                     <p class="flex justify-between border-b pb-2">
                         <span class="font-semibold text-gray-700">Procedimiento:</span>
-                        <span class="text-gray-900">{{ $this->procedimiento->NombreProcedimiento }}</span>
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div class="mb-10">
-            <div class="grid grid-cols-2 gap-8 text-sm">
-                <div class="space-y-3">
-                    <p class="flex justify-between border-b pb-2">
-                        <span class="font-semibold text-gray-700">Folio de cambios:</span>
-                        <span class="text-gray-900">{{ $this->procedimiento->FolioCambios }}</span>
-                    </p>
-                </div>
-                <div class="space-y-3">
-                    <p class="flex justify-between border-b pb-2">
-                        <span class="font-semibold text-gray-700">Cambios:</span>
-                        <span class="text-gray-900">{{ $this->procedimiento->DescripcionCambios }}</span>
+                        <span class="text-gray-900">{{ $this->politica->NombreProcedimiento }}</span>
                     </p>
                 </div>
             </div>
         </div>
 
         <div class="space-y-8 mb-12">
-            @foreach ($this->procedimiento->blocks as $block)
+            @foreach ($this->politica->blocksPolitica as $block)
                 <div class="bg-white rounded-lg border border-gray-200 p-8 shadow-sm">
                     <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-3">{{ $block->titulo }}</h2>
                     <div class="prose prose-sm max-w-none text-gray-700">
@@ -73,7 +56,7 @@
         <div class="mt-12 mb-16">
             <h2 class="text-xl font-bold text-gray-800 mb-8 border-b pb-3">Firmas</h2>
             <div class="grid grid-cols-2 gap-8">
-                @foreach ($this->procedimiento->procedimiento_firmas->sortBy('firma.nombre') as $firma)
+                @foreach ($this->politica->politica_firmas->sortBy('firma.nombre') as $firma)
                     <div class="border-t-2 border-gray-300 pt-6">
                         <p class="font-bold text-gray-800">{{ $firma->user->name ?? 'Sin usuario' }}</p>
                         <p class="text-sm text-gray-600 mt-1">{{ $firma->firma->nombre ?? 'Sin asignación' }}</p>

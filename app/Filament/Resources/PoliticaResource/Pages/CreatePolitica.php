@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\ProcedimientoResource\Pages;
+namespace App\Filament\Resources\PoliticaResource\Pages;
 
-use App\Filament\Resources\ProcedimientoResource;
+use App\Filament\Resources\PoliticaResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreateProcedimiento extends CreateRecord
+class CreatePolitica extends CreateRecord
 {
-    protected static string $resource = ProcedimientoResource::class;
+    protected static string $resource = PoliticaResource::class;
 
     protected array $creatingBlocks = [];
     protected array $creatingFirmas = [];
@@ -24,23 +24,23 @@ class CreateProcedimiento extends CreateRecord
 
     protected function afterCreate(): void
     {
-        $procedimientoId = $this->record->getKey(); // o $this->record->Idprocedimientos
+        $politicaId = $this->record->getKey(); // o $this->record->Idpoliticas
 
   
 
     foreach ($this->creatingBlocks as $block) {
-        $this->record->blocks()->create([
+        $this->record->blocksPolitica()->create([
             'titulo' => $block['titulo'],
             'descripcion' => $block['descripcion'],
-            'procedimiento_id' => $procedimientoId,
+            'politica_id' => $politicaId,
         ]);
     }
 
     foreach ($this->creatingFirmas as $firma) {
-        $this->record->procedimiento_firmas()->create([
+        $this->record->politica_firmas()->create([
             'idUsuario' => $firma['idUsuario'],
             'IdFirmas' => $firma['IdFirmas'],
-            'Idprocedimientos' => $procedimientoId,
+            'Idpoliticas' => $politicaId,
         ]);
     }
 

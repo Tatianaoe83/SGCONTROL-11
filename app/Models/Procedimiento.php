@@ -46,7 +46,9 @@ class Procedimiento extends Model
 		'Idestatus',
 		'Division',
 		'UnidadNegocio',
-		'fechaEmision'
+		'fechaEmision',
+		'FolioCambios',
+		'DescripcionCambios'
 	];
 
 	public function blocks()

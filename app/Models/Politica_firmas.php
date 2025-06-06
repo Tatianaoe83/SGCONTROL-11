@@ -10,9 +10,9 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Procedimiento_block
+ * Class Politica_firmas
  * 
- * @property int $procedimiento_id
+ * @property int $politica_id
  * @property string $titulo
  * @property string $descripcion
  * @property Carbon $created_at
@@ -20,24 +20,24 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class Procedimiento_firmas extends Model
+class Politica_firmas extends Model
 {
-	protected $table = 'procedimientos_firmas';
-	protected $primaryKey = 'Idprocedimientos_firmas';
+	protected $table = 'politicas_firmas';
+	protected $primaryKey = 'Idpoliticas_firmas';
 
 	protected $casts = [
-		'Idprocedimientos_firmas' => 'int'
+		'Idpoliticas_firmas' => 'int'
 	];
 
 	protected $fillable = [
 		'IdFirmas',
-		'Idprocedimientos',
+		'Idpoliticas',
 		'idUsuario'
 	];
 
-	public function procedimiento()
+	public function politica()
 	{
-		return $this->belongsTo(Procedimiento::class, 'Idprocedimientos_firmas');
+		return $this->belongsTo(Politica::class, 'Idpoliticas_firmas');
 	}
 
 	public function firma()

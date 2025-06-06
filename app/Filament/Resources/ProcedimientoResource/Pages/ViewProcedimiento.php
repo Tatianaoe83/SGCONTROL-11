@@ -16,7 +16,7 @@ class ViewProcedimiento extends ViewRecord
         return [
             Actions\EditAction::make(),
             Action::make('ver_reporte')
-                ->label('Ver reporte')
+                ->label('Documento')
                 ->icon('heroicon-o-eye')
                 ->url(fn () => route('filament.resources.procedimientos.view-reporte', ['record' => $this->record]))
                 ->openUrlInNewTab(),

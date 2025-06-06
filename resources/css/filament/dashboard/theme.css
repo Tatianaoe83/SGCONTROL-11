@@ -4,7 +4,6 @@
 
 
 
-
 /* Estilos personalizados para Filament */
 .fi-sidebar {
     @apply bg-white dark:bg-gray-800;
@@ -19,19 +18,19 @@
 }
 
 .fi-sidebar-item-active > a { 
-    @apply bg-indigo-500;
+    @apply bg-primary-500;
  
     & > svg, span {
         @apply text-white;
     }
  
     &:hover {
-        @apply bg-indigo-400;
+        @apply bg-primary-400;
     }
 } 
 
-.fi-dropdown-panel{
-
+.fi-dropdown-panel {
+    @apply flex w-1/3 gap-2 p-3 text-sm;
 }
 
 .fi-user-menu {

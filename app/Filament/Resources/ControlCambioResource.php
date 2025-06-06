@@ -15,9 +15,15 @@ class ControlCambioResource extends Resource
 {
     protected static ?string $model = ControlCambio::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-    protected static ?string $navigationGroup = 'SGC';
+    protected static ?string $navigationIcon = 'heroicon-m-chart-bar';
+
     protected static ?string $navigationLabel = 'Control de Cambios';
+
+    protected static ?string $navigationGroup = 'Gestión de calidad';
+
+    protected static ?int $navigationSort = 4;
+
+
 
     public static function form(Form $form): Form
     {
