@@ -18,4 +18,36 @@ class EditProceso extends EditRecord
             Actions\RestoreAction::make(),
         ];
     }
+
+    protected function afterSave(): void
+    {
+        
+        $lineasActuales = \App\Models\ProcesoLinea::where('idProceso', $this->record->IdProcesos)
+            ->pluck('idLineaProceso')
+            ->toArray();
+        
+      
+        $lineasNuevas = $this->data['idLineaProcesoP'] ?? [];
+        
+       
+        $lineasAEliminar = array_diff($lineasActuales, $lineasNuevas);
+        
+     
+        $lineasAAgregar = array_diff($lineasNuevas, $lineasActuales);
+        
+       
+        if (!empty($lineasAEliminar)) {
+            \App\Models\ProcesoLinea::where('idProceso', $this->record->IdProcesos)
+                ->whereIn('idLineaProceso', $lineasAEliminar)
+                ->delete();
+        }
+        
+        foreach ($lineasAAgregar as $linea) {
+            \App\Models\ProcesoLinea::create([
+                'idProceso' => $this->record->IdProcesos,
+                'idLineaProceso' => $linea,
+            ]);
+        }
+    }
+    
 }

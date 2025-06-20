@@ -12,6 +12,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Models\LineaProceso;
+use App\Models\ProcesoLinea;
+use App\Models\TipoProceso;
 
 class ProcesoResource extends Resource
 {
@@ -27,15 +30,42 @@ class ProcesoResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('ClaveProcesos')
-                    ->required()
-                    ->maxLength(7),
-                Forms\Components\TextInput::make('DescripcionProcesos')
-                    ->required()
-                    ->maxLength(50),
-                Forms\Components\TextInput::make('IdTipoProcesosP')
-                    ->required()
-                    ->numeric(),
+                Forms\Components\Section::make('Información del Proceso')
+                    ->schema([
+                        Forms\Components\TextInput::make('ClaveProcesos')
+                            ->required()
+                            ->maxLength(7),
+                        Forms\Components\TextInput::make('DescripcionProcesos')
+                            ->required()
+                            ->maxLength(50),
+                        Forms\Components\Select::make('IdTipoProcesosP')
+                            ->label('Tipo de proceso')
+                            ->options(TipoProceso::all()->pluck('DescripcionTipoProcesos', 'IdTipoProcesos'))
+                            ->required(),
+                    ]),
+                Forms\Components\Section::make('Líneas del Proceso')
+                    ->schema([
+                        Forms\Components\Select::make('idLineaProcesoP')
+                            ->label('Línea de proceso')
+                            ->options(function () {
+                                return LineaProceso::query()
+                                    ->selectRaw("idLineaProceso, CONCAT(nombreLineaProceso, ' - ', responsableProceso) as nombre_completo")
+                                    ->pluck('nombre_completo', 'idLineaProceso');
+                            })
+                            ->required()
+                            ->afterStateHydrated(function (Forms\Components\Select $component, $state, $record) {
+                                if ($record && $record->exists) {
+                                    $component->state($record->proceso_lineas()->pluck('idLineaProceso')->toArray());
+                                }
+                                else{
+                                    $component->state([]);
+                                }
+                            })
+                            ->searchable()
+                            ->multiple()
+                            ->preload(),
+                        
+                    ]),
             ]);
     }
 
@@ -48,7 +78,8 @@ class ProcesoResource extends Resource
                 Tables\Columns\TextColumn::make('DescripcionProcesos')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('IdTipoProcesosP')
-                    ->numeric()
+                    ->label('Tipo de proceso')
+                    ->formatStateUsing(fn ($state) => TipoProceso::find($state)->DescripcionTipoProcesos)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

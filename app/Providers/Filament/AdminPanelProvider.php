@@ -20,6 +20,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Navigation\MenuItem;
 use App\Filament\Pages\PropuestaMejora;
+use App\Filament\Widgets\MapaProcesosWidget;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -49,6 +50,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+                MapaProcesosWidget::class,
                 ##Widgets\FilamentInfoWidget::class,
                 ##PlantillasGenerale::class, 
             ])

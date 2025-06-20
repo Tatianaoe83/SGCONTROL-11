@@ -63,40 +63,62 @@ class PoliticaResource extends Resource
                             ->maxLength(255),
 
                         Forms\Components\TextInput::make('Foliopoliticas')
-                            ->label('Folio de la política')
+                            ->label('Clave de la política')
+                            ->unique(column: 'Foliopoliticas', ignoreRecord: true)
+                            ->default('POL-')
                             ->required()
                             ->maxLength(255),
 
                         Forms\Components\TextInput::make('Version')
                             ->maxLength(255)
-                            ->default(1),
+                            ->default(00),
 
                         Forms\Components\ToggleButtons::make('Idestatus')
                             ->label('Estatus')
                             ->columns(4)
                             ->required()
-                            ->options(Estatus::orderBy('idestatus')->pluck('nombre', 'idestatus')->toArray()),
+                            ->options(Estatus::orderBy('idestatus')->pluck('nombre', 'idestatus')->toArray())
+                            ->disableOptionWhen(fn (string $value): bool => $value === '3', merge: true)    
+                            ->disableOptionWhen(fn (string $value): bool => $value === '4', merge: true)
+                            ->disableOptionWhen(fn (string $value): bool => $value === '5', merge: true)
+                            ->default(1),
 
-
-                        Forms\Components\TextInput::make('Division')
+                            Forms\Components\Select::make('Division')
+                            ->multiple()
+                            ->options([
+                                'INDUSTRIAL' => 'INDUSTRIAL',
+                                'CONSTRUCCION' => 'CONSTRUCCION',
+                            ])
                             ->required()
-                            ->maxLength(255),
+                            ->searchable()
+                            ->preload()
+                            ->dehydrateStateUsing(fn ($state) => is_array($state) ? implode('/', $state) : $state),
+                            
+                            Forms\Components\Select::make('UnidadNegocio')
+                                ->label('Unidad de negocio')
+                                ->multiple()
+                                ->options([
+                                    'VT' => 'VT',
+                                    'ED' => 'ED',
+                                    'AG' => 'AG',
+                                    'CC' => 'CC',
+                                    'CORP' => 'CORP'
+                                ])
+                                ->dehydrateStateUsing(fn ($state) => is_array($state) ? implode('/', $state) : $state),
 
-                        Forms\Components\TextInput::make('UnidadNegocio')
-                            ->label('Unidad de negocio')
-                            ->required()
-                            ->maxLength(255),
+                                Forms\Components\TextInput::make('FolioCambios')
+                                ->label('Folio de cambios')
+                                ->unique(column: 'FolioCambios', ignoreRecord: true)
+                                ->maxLength(255),
+    
+                            Forms\Components\TextInput::make('DescripcionCambios')
+                                ->label('Descripción de cambios')
+                                ->maxLength(255),
+
 
                         Forms\Components\DatePicker::make('fechaEmision')
                             ->label('Fecha de emisión'),
 
-                        Forms\Components\TextInput::make('FolioCambios')
-                            ->label('Folio de cambios')
-                            ->maxLength(255),
-
-                        Forms\Components\TextInput::make('DescripcionCambios')
-                            ->label('Descripción de cambios')
-                            ->maxLength(255),
                     ]),
                 ]),
                 Wizard\Step::make('Contenido de la política')

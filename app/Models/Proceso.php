@@ -52,4 +52,9 @@ class Proceso extends Model
 		return $this->belongsTo(Procedimiento::class, 'IdProcesos');
 	}
 
+	public function proceso_lineas()
+	{
+		return $this->hasMany(ProcesoLinea::class, 'idProceso');
+	}
+
 }

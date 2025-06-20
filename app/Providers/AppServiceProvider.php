@@ -29,6 +29,6 @@ class AppServiceProvider extends ServiceProvider
                 ->visible(outsidePanels: true);
         });
 
-        Livewire::component('chat-bot-component', ChatBotComponent::class);
+        //Livewire::component('chat-bot-component', ChatBotComponent::class);
     }
 }

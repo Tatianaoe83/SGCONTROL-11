@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * Class Procedimiento
  * 
  * @property int $Idprocedimientos
- * @property int $IdProcesosP
+ * @property int $idProcesoLinea
  * @property string $FolioProcedimientos
  * @property string $NombreProcedimiento
  * @property string|null $DocumentoEditable
@@ -33,14 +33,14 @@ class Procedimiento extends Model
 	protected $primaryKey = 'Idprocedimientos';
 
 	protected $casts = [
-		'IdProcesosP' => 'int'
+		'idProcesoLinea' => 'int'
 		
 	];
 
 	protected $fillable = [
 		
 		'NombreProcedimiento',
-		'IdProcesosP',
+		'idProcesoLinea',
 		'FolioProcedimientos',
 		'Version',
 		'Idestatus',
@@ -63,7 +63,7 @@ class Procedimiento extends Model
 
 	public function proceso()
     {
-        return $this->hasMany(\App\Models\Proceso::class, 'IdProcesos');
+        return $this->belongsTo(\App\Models\Proceso::class, 'IdProcesosP');
     }
 
 	public function procedimiento_firmas()

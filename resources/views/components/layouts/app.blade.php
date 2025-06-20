@@ -30,4 +30,11 @@
 
        
     </body>
+    <footer>
+        <script>
+            @yield('scripts')
+            @stack('scripts')
+        </script>
+    </footer>
+    
 </html>

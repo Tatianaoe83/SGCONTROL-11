@@ -88,9 +88,10 @@ class Plantillasgeneradas extends Page implements Tables\Contracts\HasTable
             Action::make('editar')
                 ->label('Editar')
                 ->form([
-                    
-                    Textarea::make('content')->required(),
+                    Textarea::make('content')->required()
+                    ->label('Sección del formato'),
                     Select::make('section')
+                        ->label('Elemento')
                         ->options([1 => 'Procedimientos', 2 => 'Políticas'])
                         ->required(),
                 ])
@@ -107,8 +108,10 @@ class Plantillasgeneradas extends Page implements Tables\Contracts\HasTable
             Action::make('crear')
                 ->label('Nueva Nota')
                 ->form([
-                    Textarea::make('content')->required(),
+                    Textarea::make('content')->required()
+                    ->label('Sección del formato'),
                     Select::make('section')
+                    ->label('Elemento')
                         ->options([1 => 'Procedimientos', 2 => 'Políticas'])
                         ->required(),
                 ])

@@ -31,13 +31,15 @@
                         <span class="text-gray-900">{{ $this->politica->fechaEmision }}</span>
                     </p>
                     <p class="flex justify-between border-b pb-2">
-                        <span class="font-semibold text-gray-700">Proceso:</span>
-                        <span class="text-gray-900">{{ $this->politica->proceso[0]->DescripcionProcesos ?? 'Sin proceso' }}</span>
+                        <span class="font-semibold text-gray-700">Política:</span>
+                        <span class="text-gray-900">{{ $this->politica->Nombrepolitica ?? 'Sin política' }}</span>
                     </p>
                     <p class="flex justify-between border-b pb-2">
-                        <span class="font-semibold text-gray-700">Procedimiento:</span>
-                        <span class="text-gray-900">{{ $this->politica->NombreProcedimiento }}</span>
+                        <span class="font-semibold text-gray-700">Área:</span>
+                        <span class="text-gray-900">{{ $this->politica->NombreArea }}</span>
                     </p>
+                    
+
                 </div>
             </div>
         </div>
